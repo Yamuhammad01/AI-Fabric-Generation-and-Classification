@@ -1,4 +1,5 @@
 import express from "express";
+import path from "path";
 import { env } from "./config/env";
 import {
   errorHandler,
@@ -17,6 +18,12 @@ app.get("/health", (_req, res) => {
 
 app.use("/api/fabric-analysis", fabricAnalysisRouter);
 app.use("/api/generate-image", imageGenerationRouter);
+
+// Serve the frontend
+app.use(express.static(path.join(__dirname, "../src/view")));
+app.get("/", (_req, res) => {
+  res.sendFile(path.join(__dirname, "../src/view/index.html"));
+});
 
 app.use(notFoundHandler);
 app.use(errorHandler);
