@@ -14,6 +14,22 @@ const envSchema = z.object({
     .string()
     .default("8")
     .transform((val) => parseInt(val, 10)),
+
+  // FLUX Image Generation
+  FLUX_API_KEY: z.string().min(1, "FLUX_API_KEY is required"),
+  FLUX_ENDPOINT: z.string().url().default("https://gateway.pixazo.ai/flux-1-schnell/v1/getData"),
+  FLUX_WIDTH: z
+    .string()
+    .default("512")
+    .transform((val) => parseInt(val, 10)),
+  FLUX_HEIGHT: z
+    .string()
+    .default("512")
+    .transform((val) => parseInt(val, 10)),
+  FLUX_NUM_STEPS: z
+    .string()
+    .default("4")
+    .transform((val) => parseInt(val, 10)),
 });
 
 const parsedEnv = envSchema.safeParse(process.env);

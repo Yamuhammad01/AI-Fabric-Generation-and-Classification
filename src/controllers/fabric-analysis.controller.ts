@@ -1,6 +1,8 @@
 import { Request, Response } from "express";
 import { env } from "../config/env";
 import { FabricAnalysisResponseDto } from "../dto/fabric-analysis.dto";
+import { buildPrompt } from "../services/prompt-builder.service";
+import { fluxService } from "../services/flux.service";
 import { fabricAnalysisService } from "../services/fabric-analysis.service";
 import { AppError } from "../utils/app-error";
 
@@ -19,7 +21,7 @@ export class FabricAnalysisController {
       file.mimetype
     );
 
-    const responseBody: FabricAnalysisResponseDto = {
+    const baseResponse: FabricAnalysisResponseDto = {
       success: true,
       data: result,
       meta: {
@@ -30,7 +32,23 @@ export class FabricAnalysisController {
       },
     };
 
-    res.status(200).json(responseBody);
+    // If ?generate=true query param is present, chain into prompt builder + FLUX
+    if (req.query.generate === "true") {
+      const prompt = buildPrompt(result);
+      const generatedImageUrl = await fluxService.generateImage(prompt);
+
+      res.status(200).json({
+        ...baseResponse,
+        data: {
+          analysis: result,
+          prompt,
+          generatedImageUrl,
+        },
+      });
+      return;
+    }
+
+    res.status(200).json(baseResponse);
   }
 }
 
