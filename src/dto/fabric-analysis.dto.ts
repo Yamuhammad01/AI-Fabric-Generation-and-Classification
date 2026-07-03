@@ -20,6 +20,7 @@ export const FabricAnalysisResultSchema = z.object({
   confidence_score: z.number().min(0).max(1),
   analysis_notes: z.string(),
   care_hint: z.string(),
+  creative_direction: z.string(),
 });
 
 export type FabricAnalysisResult = z.infer<typeof FabricAnalysisResultSchema>;

@@ -30,8 +30,11 @@ Schema:
   "cultural_influences": [],
   "confidence_score": 0.0,
   "analysis_notes": "",
-  "care_hint": ""
+  "care_hint": "",
+  "creative_direction": ""
 }
+
+The "creative_direction" field is a single concise sentence suggesting a creative scene or concept for a fashion photoshoot featuring this fabric. For example: "A model walking through a bustling Lagos market at golden hour, the fabric catching the warm sunlight." or "A dramatic studio portrait with bold shadows, emphasizing the fabric's texture against a minimalist backdrop." Be imaginative but keep it to one sentence.
 
 Do not return markdown.
 
