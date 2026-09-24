@@ -1,6 +1,5 @@
 import express from "express";
 import path from "path";
-import { env } from "./config/env";
 import {
   errorHandler,
   notFoundHandler,
@@ -19,18 +18,12 @@ app.get("/health", (_req, res) => {
 app.use("/api/fabric-analysis", fabricAnalysisRouter);
 app.use("/api/generate-image", imageGenerationRouter);
 
-// Serve the frontend
-app.use(express.static(path.join(__dirname, "../src/view")));
-app.get("/", (_req, res) => {
-  res.sendFile(path.join(__dirname, "../src/view/index.html"));
-});
+// Vercel serves files in public/ through its CDN and ignores express.static().
+// Keeping this middleware also makes the built-in frontend work with npm run dev
+// and npm start outside Vercel.
+app.use(express.static(path.join(__dirname, "../public")));
 
 app.use(notFoundHandler);
 app.use(errorHandler);
-
-app.listen(env.PORT, () => {
-  // eslint-disable-next-line no-console
-  console.log(` Fabric analysis API running on port ${env.PORT}`);
-});
 
 export default app;

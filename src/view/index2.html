@@ -1,0 +1,1709 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>UGEGBe — AI Nigerian Fashion Studio</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0e0a06;
+  --bg2: #1a1208;
+  --bg3: #251a0e;
+  --card: #1e1409;
+  --card2: #2a1d0f;
+  --gold: #c8902a;
+  --gold2: #e8b84b;
+  --amber: #d4681c;
+  --cream: #f5ead6;
+  --cream2: #e8d5b5;
+  --text: #f5ead6;
+  --text2: #b89a72;
+  --text3: #7d6347;
+  --red: #c0392b;
+  --green: #1e6b45;
+  --green2: #27ae60;
+  --border: rgba(200,144,42,0.15);
+  --border2: rgba(200,144,42,0.3);
+  --pattern: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23c8902a' fill-opacity='0.04'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* ── TYPOGRAPHY ── */
+.display { font-family: 'Playfair Display', serif; }
+.serif-italic { font-family: 'Playfair Display', serif; font-style: italic; }
+
+/* ── SCROLLBAR ── */
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: var(--bg2); }
+::-webkit-scrollbar-thumb { background: var(--gold); border-radius: 2px; }
+
+/* ── NAV ── */
+#nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+  background: rgba(14,10,6,0.92);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border);
+  height: 64px;
+  display: flex; align-items: center;
+  padding: 0 2rem;
+  gap: 2rem;
+}
+.nav-logo {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.5rem;
+  color: var(--gold2);
+  letter-spacing: 0.05em;
+  text-decoration: none;
+  cursor: pointer;
+}
+.nav-logo span { color: var(--amber); font-style: italic; }
+.nav-links { display: flex; gap: 0.25rem; margin-left: auto; align-items: center; }
+.nav-btn {
+  background: none; border: none; color: var(--text2);
+  font-family: 'DM Sans', sans-serif; font-size: 0.85rem;
+  padding: 0.45rem 0.9rem; border-radius: 6px; cursor: pointer;
+  transition: all 0.2s; letter-spacing: 0.03em;
+}
+.nav-btn:hover { color: var(--text); background: rgba(200,144,42,0.08); }
+.nav-btn.active { color: var(--gold2); }
+#user-badge {
+  display: none; align-items: center; gap: 0.5rem;
+  padding: 0.4rem 0.8rem;
+  background: rgba(200,144,42,0.1);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  font-size: 0.8rem; color: var(--gold2);
+}
+#logout-btn {
+  background: none; border: 1px solid var(--border);
+  color: var(--text3); font-family: 'DM Sans', sans-serif;
+  font-size: 0.78rem; padding: 0.35rem 0.7rem;
+  border-radius: 5px; cursor: pointer; transition: all 0.2s;
+}
+#logout-btn:hover { border-color: var(--amber); color: var(--amber); }
+
+/* ── SCREENS ── */
+.screen { display: none; min-height: 100vh; padding-top: 64px; }
+.screen.active { display: block; }
+
+/* ── HERO / AUTH ── */
+#screen-auth {
+  display: none;
+  min-height: 100vh;
+  background: var(--bg);
+  position: relative;
+  overflow: hidden;
+}
+#screen-auth.active { display: flex; flex-direction: column; align-items: center; justify-content: center; }
+
+.hero-bg {
+  position: absolute; inset: 0;
+  background-image: var(--pattern);
+  pointer-events: none;
+}
+.hero-orb {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(80px);
+  pointer-events: none;
+}
+.orb1 { width: 500px; height: 500px; background: rgba(200,100,28,0.12); top: -100px; right: -100px; }
+.orb2 { width: 400px; height: 400px; background: rgba(200,144,42,0.08); bottom: -100px; left: -100px; }
+
+.auth-container {
+  position: relative; z-index: 1;
+  display: flex; flex-direction: column; align-items: center;
+  gap: 3rem; padding: 2rem; width: 100%; max-width: 480px;
+}
+.hero-text { text-align: center; }
+.hero-badge {
+  display: inline-flex; align-items: center; gap: 0.5rem;
+  background: rgba(200,144,42,0.12);
+  border: 1px solid var(--border2);
+  color: var(--gold2); font-size: 0.75rem;
+  padding: 0.35rem 0.9rem; border-radius: 20px;
+  margin-bottom: 1.5rem; letter-spacing: 0.08em; text-transform: uppercase;
+}
+.hero-title {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(2.8rem, 6vw, 4rem);
+  line-height: 1.1;
+  color: var(--cream);
+  margin-bottom: 0.75rem;
+}
+.hero-title em { color: var(--gold2); font-style: italic; }
+.hero-sub { color: var(--text2); font-size: 1rem; line-height: 1.6; font-weight: 300; }
+
+.auth-card {
+  width: 100%;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 2rem;
+  position: relative;
+  overflow: hidden;
+}
+.auth-card::before {
+  content: '';
+  position: absolute; top: 0; left: 0; right: 0; height: 2px;
+  background: linear-gradient(90deg, transparent, var(--gold), transparent);
+}
+.auth-tabs {
+  display: flex; gap: 0; margin-bottom: 1.5rem;
+  background: var(--bg2); border-radius: 8px; padding: 3px;
+}
+.auth-tab {
+  flex: 1; text-align: center; padding: 0.5rem;
+  font-size: 0.85rem; font-family: 'DM Sans', sans-serif;
+  border: none; background: none; color: var(--text3);
+  border-radius: 6px; cursor: pointer; transition: all 0.2s;
+}
+.auth-tab.active { background: var(--card2); color: var(--gold2); }
+
+.form-group { margin-bottom: 1rem; }
+.form-label { display: block; font-size: 0.78rem; color: var(--text2); margin-bottom: 0.4rem; letter-spacing: 0.05em; text-transform: uppercase; }
+.form-input {
+  width: 100%; padding: 0.65rem 0.9rem;
+  background: var(--bg2); border: 1px solid var(--border);
+  border-radius: 8px; color: var(--text);
+  font-family: 'DM Sans', sans-serif; font-size: 0.9rem;
+  outline: none; transition: border-color 0.2s;
+}
+.form-input:focus { border-color: var(--gold); }
+.form-input::placeholder { color: var(--text3); }
+
+.btn-primary {
+  width: 100%; padding: 0.8rem;
+  background: var(--gold);
+  border: none; border-radius: 8px;
+  color: var(--bg); font-family: 'DM Sans', sans-serif;
+  font-size: 0.9rem; font-weight: 500;
+  cursor: pointer; transition: all 0.2s;
+  letter-spacing: 0.03em;
+}
+.btn-primary:hover { background: var(--gold2); transform: translateY(-1px); }
+.btn-primary:active { transform: translateY(0); }
+.btn-primary:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+
+.btn-secondary {
+  padding: 0.6rem 1.2rem;
+  background: rgba(200,144,42,0.1);
+  border: 1px solid var(--border2);
+  color: var(--gold2); border-radius: 8px;
+  font-family: 'DM Sans', sans-serif; font-size: 0.85rem;
+  cursor: pointer; transition: all 0.2s;
+}
+.btn-secondary:hover { background: rgba(200,144,42,0.18); }
+
+.btn-ghost {
+  padding: 0.6rem 1.2rem;
+  background: none; border: 1px solid var(--border);
+  color: var(--text2); border-radius: 8px;
+  font-family: 'DM Sans', sans-serif; font-size: 0.85rem;
+  cursor: pointer; transition: all 0.2s;
+}
+.btn-ghost:hover { border-color: var(--border2); color: var(--text); }
+
+.error-msg { color: #e57373; font-size: 0.82rem; margin-top: 0.75rem; text-align: center; }
+.success-msg { color: var(--green2); font-size: 0.82rem; margin-top: 0.75rem; text-align: center; }
+
+/* ── MAIN APP ── */
+#screen-app {
+  display: none;
+  min-height: 100vh;
+}
+#screen-app.active { display: flex; }
+
+.sidebar {
+  width: 220px; min-width: 220px;
+  background: var(--bg2);
+  border-right: 1px solid var(--border);
+  position: fixed; top: 64px; left: 0; bottom: 0;
+  overflow-y: auto;
+  padding: 1.5rem 1rem;
+  display: flex; flex-direction: column; gap: 0.25rem;
+}
+.sidebar-section { font-size: 0.68rem; color: var(--text3); letter-spacing: 0.12em; text-transform: uppercase; padding: 0.75rem 0.5rem 0.3rem; margin-top: 0.5rem; }
+.sidebar-link {
+  display: flex; align-items: center; gap: 0.7rem;
+  padding: 0.55rem 0.8rem; border-radius: 8px;
+  color: var(--text2); font-size: 0.85rem;
+  cursor: pointer; transition: all 0.2s; border: none; background: none;
+  width: 100%; text-align: left; font-family: 'DM Sans', sans-serif;
+}
+.sidebar-link:hover { background: rgba(200,144,42,0.06); color: var(--text); }
+.sidebar-link.active { background: rgba(200,144,42,0.12); color: var(--gold2); }
+.sidebar-icon { font-size: 1.1rem; width: 20px; text-align: center; }
+
+.main-content {
+  margin-left: 220px;
+  flex: 1;
+  padding: 2rem;
+  max-width: calc(100% - 220px);
+}
+
+/* ── PAGE HEADERS ── */
+.page-header { margin-bottom: 2rem; }
+.page-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.8rem; color: var(--cream); font-weight: 700;
+}
+.page-sub { color: var(--text2); font-size: 0.9rem; margin-top: 0.3rem; font-weight: 300; }
+
+/* ── UPLOAD ZONE ── */
+.upload-zone {
+  border: 2px dashed var(--border2);
+  border-radius: 16px;
+  padding: 3rem 2rem;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.3s;
+  background: var(--card);
+  position: relative; overflow: hidden;
+}
+.upload-zone:hover, .upload-zone.dragover {
+  border-color: var(--gold);
+  background: rgba(200,144,42,0.05);
+}
+.upload-zone input[type="file"] { display: none; }
+.upload-icon { font-size: 3rem; margin-bottom: 1rem; opacity: 0.6; }
+.upload-title { font-family: 'Playfair Display', serif; font-size: 1.2rem; color: var(--cream); margin-bottom: 0.5rem; }
+.upload-sub { color: var(--text2); font-size: 0.85rem; }
+.upload-preview {
+  max-width: 280px; max-height: 280px;
+  border-radius: 12px; object-fit: cover;
+  margin: 1rem auto; display: block;
+  border: 2px solid var(--border2);
+}
+
+/* ── ANALYSIS RESULT ── */
+.analysis-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+.analysis-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 1rem; margin-top: 1rem;
+}
+.analysis-item { }
+.analysis-label { font-size: 0.7rem; color: var(--text3); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 0.3rem; }
+.analysis-value { font-size: 0.9rem; color: var(--cream); font-weight: 500; }
+.fabric-badge {
+  display: inline-flex; align-items: center; gap: 0.4rem;
+  background: rgba(200,144,42,0.15);
+  border: 1px solid var(--border2);
+  color: var(--gold2); padding: 0.3rem 0.7rem;
+  border-radius: 20px; font-size: 0.8rem;
+}
+.confidence-bar {
+  height: 4px; background: var(--bg3); border-radius: 2px; margin-top: 0.4rem;
+}
+.confidence-fill {
+  height: 100%; background: var(--gold);
+  border-radius: 2px; transition: width 0.6s ease;
+}
+.color-swatches { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 0.4rem; }
+.swatch {
+  width: 24px; height: 24px; border-radius: 50%;
+  border: 2px solid rgba(255,255,255,0.1);
+}
+
+/* ── COMPLEXITY METER ── */
+.complexity-dots { display: flex; gap: 4px; margin-top: 0.4rem; }
+.complexity-dot {
+  width: 8px; height: 8px; border-radius: 50%;
+  background: var(--bg3); transition: background 0.3s;
+}
+.complexity-dot.filled { background: var(--gold); }
+
+/* ── DESIGN FORM ── */
+.design-form {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 16px; padding: 1.5rem;
+}
+.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+.form-select {
+  width: 100%; padding: 0.65rem 0.9rem;
+  background: var(--bg2); border: 1px solid var(--border);
+  border-radius: 8px; color: var(--text);
+  font-family: 'DM Sans', sans-serif; font-size: 0.9rem;
+  outline: none; cursor: pointer;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg width='10' height='6' viewBox='0 0 10 6' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%23b89a72' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat; background-position: right 0.8rem center;
+}
+.form-select:focus { border-color: var(--gold); }
+.form-select option { background: var(--bg2); }
+
+.color-picker-row { display: flex; gap: 0.5rem; flex-wrap: wrap; align-items: center; }
+.color-chip {
+  width: 36px; height: 36px; border-radius: 8px;
+  border: 2px solid rgba(255,255,255,0.15);
+  cursor: pointer; position: relative;
+}
+.color-chip input[type="color"] {
+  position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%;
+}
+.add-color-btn {
+  width: 36px; height: 36px; border-radius: 8px;
+  border: 1px dashed var(--border2); background: none;
+  color: var(--text3); font-size: 1.2rem; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  transition: all 0.2s;
+}
+.add-color-btn:hover { border-color: var(--gold); color: var(--gold); }
+.remove-color {
+  position: absolute; top: -6px; right: -6px; width: 14px; height: 14px;
+  background: var(--red); border-radius: 50%; border: none;
+  color: white; font-size: 0.6rem; cursor: pointer; display: none;
+  align-items: center; justify-content: center; line-height: 1;
+}
+.color-chip:hover .remove-color { display: flex; }
+
+.complexity-slider { width: 100%; margin-top: 0.4rem; accent-color: var(--gold); }
+
+/* ── IMAGE COUNT TOGGLE ── */
+.img-count-row { display: flex; gap: 0.5rem; }
+.img-count-btn {
+  flex: 1; padding: 0.5rem;
+  background: var(--bg2); border: 1px solid var(--border);
+  color: var(--text2); border-radius: 8px;
+  font-family: 'DM Sans', sans-serif; font-size: 0.85rem;
+  cursor: pointer; transition: all 0.2s; text-align: center;
+}
+.img-count-btn.active { background: rgba(200,144,42,0.15); border-color: var(--gold); color: var(--gold2); }
+
+/* ── PROGRESS / STEPS ── */
+.progress-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 16px; padding: 2rem;
+  text-align: center;
+}
+.progress-steps { display: flex; gap: 0; justify-content: center; margin: 1.5rem 0; }
+.progress-step {
+  display: flex; flex-direction: column; align-items: center;
+  gap: 0.4rem; flex: 1; max-width: 140px; position: relative;
+}
+.progress-step:not(:last-child)::after {
+  content: '';
+  position: absolute; top: 14px; left: 50%; right: -50%;
+  height: 2px; background: var(--border);
+}
+.progress-step.done::after { background: var(--gold); }
+.step-dot {
+  width: 28px; height: 28px; border-radius: 50%;
+  border: 2px solid var(--border);
+  background: var(--bg2);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 0.75rem; color: var(--text3);
+  transition: all 0.3s; z-index: 1;
+}
+.progress-step.active .step-dot { border-color: var(--gold); color: var(--gold); background: rgba(200,144,42,0.1); }
+.progress-step.done .step-dot { border-color: var(--gold); background: var(--gold); color: var(--bg); }
+.step-label { font-size: 0.72rem; color: var(--text3); text-align: center; }
+.progress-step.active .step-label { color: var(--gold2); }
+.progress-step.done .step-label { color: var(--text2); }
+
+.spinner {
+  width: 40px; height: 40px; border-radius: 50%;
+  border: 3px solid var(--border2);
+  border-top-color: var(--gold);
+  animation: spin 0.8s linear infinite;
+  margin: 1rem auto;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+.progress-msg { color: var(--text2); font-size: 0.9rem; font-weight: 300; font-style: italic; }
+
+/* ── RESULT CARD ── */
+.result-section { animation: fadeUp 0.5s ease; }
+@keyframes fadeUp { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
+
+.result-layout { display: grid; grid-template-columns: 1fr 1.2fr; gap: 1.5rem; align-items: start; }
+
+.result-images { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; }
+.result-img-wrap {
+  aspect-ratio: 3/4; border-radius: 12px; overflow: hidden;
+  background: var(--card2); border: 1px solid var(--border);
+  position: relative;
+}
+.result-img-wrap.single { grid-column: 1 / -1; aspect-ratio: 4/3; }
+.result-img-wrap img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.4s; }
+.result-img-wrap:hover img { transform: scale(1.03); }
+.img-placeholder {
+  display: flex; flex-direction: column; align-items: center;
+  justify-content: center; height: 100%; gap: 0.5rem;
+  color: var(--text3); font-size: 0.8rem; text-align: center; padding: 1rem;
+}
+.img-placeholder-icon { font-size: 2.5rem; opacity: 0.3; }
+
+.result-meta {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 16px; padding: 1.5rem;
+}
+.result-name {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.5rem; color: var(--cream); margin-bottom: 0.25rem;
+}
+.result-fabric-tag {
+  display: inline-flex; align-items: center; gap: 0.4rem;
+  background: rgba(200,144,42,0.12); border: 1px solid var(--border2);
+  color: var(--gold); font-size: 0.75rem; padding: 0.25rem 0.6rem;
+  border-radius: 12px; margin-bottom: 1rem; text-transform: uppercase; letter-spacing: 0.05em;
+}
+.result-desc { color: var(--text2); font-size: 0.88rem; line-height: 1.7; font-weight: 300; margin-bottom: 1.25rem; }
+.result-row { display: flex; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 1rem; }
+.result-keyword {
+  background: var(--bg3); border: 1px solid var(--border);
+  color: var(--text2); font-size: 0.75rem; padding: 0.25rem 0.6rem;
+  border-radius: 6px;
+}
+.result-section-title { font-size: 0.7rem; color: var(--text3); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 0.5rem; }
+.result-cultural {
+  padding: 0.75rem 1rem;
+  background: rgba(200,144,42,0.06);
+  border-left: 2px solid var(--gold);
+  border-radius: 0 8px 8px 0;
+  color: var(--text2); font-size: 0.85rem; font-style: italic;
+  margin-bottom: 1rem;
+}
+.result-garments { display: flex; gap: 0.4rem; flex-wrap: wrap; }
+.garment-tag {
+  background: var(--bg3); border: 1px solid var(--border);
+  color: var(--cream2); font-size: 0.78rem; padding: 0.3rem 0.65rem;
+  border-radius: 6px;
+}
+.palette-strip { display: flex; gap: 4px; margin-top: 0.4rem; }
+.palette-block { height: 32px; border-radius: 4px; flex: 1; }
+
+.ai-badge {
+  display: inline-flex; align-items: center; gap: 0.35rem;
+  font-size: 0.72rem; color: var(--text3); margin-top: 1rem;
+}
+.ai-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--green2); }
+
+/* ── HISTORY ── */
+.history-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1.25rem; }
+.history-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 16px; overflow: hidden;
+  cursor: pointer; transition: all 0.25s;
+}
+.history-card:hover { border-color: var(--border2); transform: translateY(-2px); }
+.history-img {
+  aspect-ratio: 16/10; overflow: hidden;
+  background: var(--card2); position: relative;
+}
+.history-img img { width: 100%; height: 100%; object-fit: cover; }
+.history-body { padding: 1rem; }
+.history-name { font-family: 'Playfair Display', serif; font-size: 1rem; color: var(--cream); margin-bottom: 0.3rem; }
+.history-meta { font-size: 0.78rem; color: var(--text3); }
+.history-tags { display: flex; gap: 0.4rem; margin-top: 0.5rem; flex-wrap: wrap; }
+.history-tag {
+  background: var(--bg3); color: var(--text2);
+  font-size: 0.7rem; padding: 0.15rem 0.5rem; border-radius: 4px;
+}
+.history-palette { display: flex; gap: 3px; margin-top: 0.5rem; }
+.h-swatch { width: 20px; height: 6px; border-radius: 2px; }
+.delete-btn {
+  background: none; border: 1px solid rgba(192,57,43,0.3);
+  color: rgba(192,57,43,0.7); font-size: 0.75rem; padding: 0.3rem 0.6rem;
+  border-radius: 6px; cursor: pointer; font-family: 'DM Sans', sans-serif;
+  transition: all 0.2s; margin-top: 0.75rem;
+}
+.delete-btn:hover { border-color: var(--red); color: var(--red); }
+
+.empty-state {
+  text-align: center; padding: 4rem 2rem;
+  color: var(--text3);
+}
+.empty-icon { font-size: 3rem; margin-bottom: 1rem; opacity: 0.3; }
+.empty-title { font-family: 'Playfair Display', serif; font-size: 1.2rem; color: var(--text2); margin-bottom: 0.5rem; }
+
+/* ── TOAST ── */
+#toast {
+  position: fixed; bottom: 2rem; right: 2rem; z-index: 1000;
+  padding: 0.75rem 1.25rem;
+  background: var(--card2); border: 1px solid var(--border);
+  border-radius: 10px; color: var(--text);
+  font-size: 0.85rem; max-width: 320px;
+  transform: translateY(20px); opacity: 0;
+  transition: all 0.3s;
+  pointer-events: none;
+}
+#toast.show { transform: translateY(0); opacity: 1; }
+#toast.error { border-color: rgba(192,57,43,0.4); background: rgba(192,57,43,0.1); }
+#toast.success { border-color: rgba(39,174,96,0.4); background: rgba(39,174,96,0.08); }
+
+/* ── DETAIL MODAL ── */
+#modal-backdrop {
+  display: none;
+  position: fixed; inset: 0; z-index: 200;
+  background: rgba(0,0,0,0.85);
+  overflow-y: auto; padding: 2rem;
+}
+#modal-backdrop.open { display: flex; align-items: flex-start; justify-content: center; }
+.modal {
+  background: var(--bg2); border: 1px solid var(--border);
+  border-radius: 20px; width: 100%; max-width: 800px;
+  overflow: hidden; position: relative;
+}
+.modal-close {
+  position: absolute; top: 1rem; right: 1rem;
+  background: var(--bg3); border: 1px solid var(--border);
+  color: var(--text2); width: 36px; height: 36px; border-radius: 50%;
+  font-size: 1.1rem; cursor: pointer; display: flex;
+  align-items: center; justify-content: center; transition: all 0.2s; z-index: 1;
+}
+.modal-close:hover { background: var(--card2); color: var(--text); }
+#modal-content { padding: 2rem; }
+
+/* ── TABS (inside pages) ── */
+.page-tabs { display: flex; gap: 0.25rem; margin-bottom: 1.5rem; border-bottom: 1px solid var(--border); padding-bottom: 0; }
+.page-tab {
+  padding: 0.6rem 1rem; font-size: 0.85rem;
+  background: none; border: none; color: var(--text3);
+  cursor: pointer; font-family: 'DM Sans', sans-serif;
+  border-bottom: 2px solid transparent; margin-bottom: -1px;
+  transition: all 0.2s;
+}
+.page-tab:hover { color: var(--text2); }
+.page-tab.active { color: var(--gold2); border-bottom-color: var(--gold); }
+
+/* ── SECTION DIVIDER ── */
+.section-gap { height: 1.5rem; }
+
+/* ── RESPONSIVE ── */
+@media (max-width: 900px) {
+  .sidebar { display: none; }
+  .main-content { margin-left: 0; max-width: 100%; }
+  .result-layout { grid-template-columns: 1fr; }
+  .form-row { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav id="nav">
+  <span class="nav-logo" onclick="goHome()">UGEGBe <span>Studio</span></span>
+  <div class="nav-links" id="nav-links-auth">
+    <div id="user-badge">
+      <span>●</span>
+      <span id="user-name-display"></span>
+    </div>
+    <button class="nav-btn" onclick="showPage('page-analyze')" id="nav-analyze">Analyze Fabric</button>
+    <button class="nav-btn" onclick="showPage('page-manual')" id="nav-manual">Design Studio</button>
+    <button class="nav-btn" onclick="showPage('page-history')" id="nav-history">My Designs</button>
+    <button id="logout-btn" onclick="logout()">Sign out</button>
+  </div>
+</nav>
+
+<!-- AUTH SCREEN -->
+<div id="screen-auth" class="screen active">
+  <div class="hero-bg"></div>
+  <div class="hero-orb orb1"></div>
+  <div class="hero-orb orb2"></div>
+  <div class="auth-container">
+    <div class="hero-text">
+      <div class="hero-badge">✦ Powered by Claude Vision + FLUX.1 Pro</div>
+      <h1 class="hero-title">Nigerian Fashion,<br><em>Reimagined by AI</em></h1>
+      <p class="hero-sub">Photograph any fabric. Our AI identifies it, then generates stunning fashion designs inspired by Ankara, Aso-Oke, Adire, and the full richness of Nigerian textile culture.</p>
+    </div>
+    <div class="auth-card">
+      <div class="auth-tabs">
+        <button class="auth-tab active" onclick="switchAuthTab('login')">Sign In</button>
+        <button class="auth-tab" onclick="switchAuthTab('register')">Create Account</button>
+      </div>
+      <!-- Login -->
+      <div id="auth-login">
+        <div class="form-group">
+          <label class="form-label">Email</label>
+          <input class="form-input" type="email" id="login-email" placeholder="you@example.com" autocomplete="email">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Password</label>
+          <input class="form-input" type="password" id="login-password" placeholder="••••••••" autocomplete="current-password">
+        </div>
+        <button class="btn-primary" onclick="doLogin()" id="login-btn">Sign In</button>
+        <div id="login-error" class="error-msg"></div>
+      </div>
+      <!-- Register -->
+      <div id="auth-register" style="display:none;">
+        <div class="form-group">
+          <label class="form-label">Full Name</label>
+          <input class="form-input" type="text" id="reg-name" placeholder="Adaeze Okonkwo">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Email</label>
+          <input class="form-input" type="email" id="reg-email" placeholder="you@example.com" autocomplete="email">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Password</label>
+          <input class="form-input" type="password" id="reg-password" placeholder="Min. 6 characters" autocomplete="new-password">
+        </div>
+        <button class="btn-primary" onclick="doRegister()" id="register-btn">Create Account</button>
+        <div id="register-error" class="error-msg"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- APP SCREEN -->
+<div id="screen-app" class="screen">
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <button class="sidebar-link active" id="sl-analyze" onclick="showPage('page-analyze')">
+      <span class="sidebar-icon">📷</span> Analyze Fabric
+    </button>
+    <button class="sidebar-link" id="sl-manual" onclick="showPage('page-manual')">
+      <span class="sidebar-icon">✏️</span> Design Studio
+    </button>
+    <div class="sidebar-section">Library</div>
+    <button class="sidebar-link" id="sl-history" onclick="showPage('page-history')">
+      <span class="sidebar-icon">🗂</span> My Designs
+    </button>
+    <div style="margin-top:auto; padding-top:2rem;">
+      <div style="font-size:0.7rem; color:var(--text3); text-align:center; padding:0.5rem; line-height:1.6;">
+        <span style="display:block; font-family:'Playfair Display',serif; font-size:0.8rem; color:var(--text2); margin-bottom:0.25rem;">UGEGBe Studio</span>
+        Claude Vision + FLUX.1 Pro
+      </div>
+    </div>
+  </aside>
+
+  <!-- Main Content Area -->
+  <main class="main-content">
+
+    <!-- PAGE: ANALYZE FABRIC -->
+    <div id="page-analyze" class="page active">
+      <div class="page-header">
+        <h1 class="page-title display">Fabric Vision</h1>
+        <p class="page-sub">Photograph your fabric — AI identifies type, pattern, colors, then generates a full fashion design</p>
+      </div>
+
+      <div class="page-tabs">
+        <button class="page-tab active" onclick="switchAnalyzeTab('upload')" id="atab-upload">Upload Photo</button>
+        <button class="page-tab" onclick="switchAnalyzeTab('result')" id="atab-result" style="display:none;">Analysis</button>
+        <button class="page-tab" onclick="switchAnalyzeTab('design')" id="atab-design" style="display:none;">Generated Design</button>
+      </div>
+
+      <!-- Upload tab -->
+      <div id="analyze-upload">
+        <div class="upload-zone" id="dropzone" onclick="document.getElementById('fabric-file').click()">
+          <input type="file" id="fabric-file" accept="image/jpeg,image/png,image/webp" onchange="handleFileSelect(this)">
+          <div class="upload-icon" id="upload-icon">📸</div>
+          <div class="upload-title" id="upload-title">Drop your fabric photo here</div>
+          <div class="upload-sub" id="upload-sub">or click to browse · JPEG, PNG, WEBP · Max 10MB</div>
+          <img id="upload-preview" class="upload-preview" style="display:none;">
+        </div>
+
+        <div class="section-gap"></div>
+
+        <!-- Options row -->
+        <div id="upload-options" style="display:none;">
+          <div class="design-form">
+            <div style="margin-bottom:1rem;">
+              <label class="form-label">Number of Fashion Images</label>
+              <div class="img-count-row">
+                <div class="img-count-btn active" onclick="setImgCount(1, this)">1</div>
+                <div class="img-count-btn" onclick="setImgCount(2, this)">2</div>
+                <div class="img-count-btn" onclick="setImgCount(3, this)">3</div>
+                <div class="img-count-btn" onclick="setImgCount(4, this)">4</div>
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label">Garment Override <span style="color:var(--text3)">(optional)</span></label>
+                <select class="form-select" id="override-garment">
+                  <option value="">Auto-detect from fabric</option>
+                  <option value="agbada">Agbada</option>
+                  <option value="buba_and_iro">Buba & Iro</option>
+                  <option value="kaftan">Kaftan</option>
+                  <option value="senator">Senator Suit</option>
+                  <option value="iro_and_buba">Iro & Buba (Ceremonial)</option>
+                  <option value="dashiki">Dashiki</option>
+                  <option value="complete">Complete Set</option>
+                  <option value="bridal">Bridal Outfit</option>
+                  <option value="dress">Afro-Fusion Dress</option>
+                  <option value="skirt_and_blouse">Skirt & Blouse</option>
+                  <option value="gown">Gown</option>
+                  <option value="jumpsuit">Jumpsuit</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Occasion Override <span style="color:var(--text3)">(optional)</span></label>
+                <select class="form-select" id="override-occasion">
+                  <option value="">Auto-detect from fabric</option>
+                  <option value="owambe">Owambe Party</option>
+                  <option value="traditional_wedding">Traditional Wedding</option>
+                  <option value="church">Church / Sunday Service</option>
+                  <option value="corporate">Corporate / Business</option>
+                  <option value="durbar">Durbar Festival</option>
+                  <option value="naming_ceremony">Naming Ceremony</option>
+                  <option value="coronation">Coronation / Royal</option>
+                  <option value="graduation">Graduation</option>
+                  <option value="casual">Casual / Everyday</option>
+                </select>
+              </div>
+            </div>
+            <div class="form-group" style="margin-bottom:1rem;">
+              <label class="form-label">Model Gender <span style="color:var(--text3)">(who wears the garment)</span></label>
+              <div class="img-count-row">
+                <div class="img-count-btn active" id="g-auto" onclick="setGender('auto',this)">Auto</div>
+                <div class="img-count-btn" id="g-female" onclick="setGender('female',this)">👩🏿 Nigerian Woman</div>
+                <div class="img-count-btn" id="g-male" onclick="setGender('male',this)">👨🏿 Nigerian Man</div>
+              </div>
+            </div>
+            <div style="display:flex; gap:0.75rem;">
+              <button class="btn-primary" style="flex:1;" onclick="doAnalyzeAndDesign()">
+                ✦ Analyse & Generate Design
+              </button>
+              <button class="btn-ghost" onclick="doAnalyzeOnly()">Analysis Only</button>
+            </div>
+          </div>
+        </div>
+
+        <div id="analyze-progress" style="display:none;">
+          <div class="progress-card">
+            <div style="font-family:'Playfair Display',serif; font-size:1.1rem; color:var(--cream); margin-bottom:0.5rem;">
+              Processing your fabric…
+            </div>
+            <div class="progress-steps">
+              <div class="progress-step active" id="step1">
+                <div class="step-dot">1</div>
+                <div class="step-label">Uploading</div>
+              </div>
+              <div class="progress-step" id="step2">
+                <div class="step-dot">2</div>
+                <div class="step-label">Claude Vision</div>
+              </div>
+              <div class="progress-step" id="step3">
+                <div class="step-dot">3</div>
+                <div class="step-label">Designing</div>
+              </div>
+              <div class="progress-step" id="step4">
+                <div class="step-dot">4</div>
+                <div class="step-label">Generating Images</div>
+              </div>
+            </div>
+            <div class="spinner"></div>
+            <div class="progress-msg" id="progress-msg">Identifying fabric type and pattern…</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Analysis result tab -->
+      <div id="analyze-result" style="display:none;">
+        <div class="analysis-card" id="analysis-display"></div>
+        <div style="display:flex; gap:0.75rem; margin-top:0;">
+          <button class="btn-primary" onclick="proceedToDesignFromAnalysis()" id="btn-proceed-design">
+            ✦ Generate Design from this Fabric
+          </button>
+          <button class="btn-ghost" onclick="resetAnalyze()">Try Another Photo</button>
+        </div>
+      </div>
+
+      <!-- Design result tab -->
+      <div id="analyze-design" style="display:none;">
+        <div id="design-result-display"></div>
+        <div style="margin-top:1rem; display:flex; gap:0.75rem;">
+          <button class="btn-secondary" onclick="resetAnalyze()">New Fabric Photo</button>
+          <button class="btn-ghost" onclick="showPage('page-history')">View All Designs</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- PAGE: DESIGN STUDIO (manual) -->
+    <div id="page-manual" class="page" style="display:none;">
+      <div class="page-header">
+        <h1 class="page-title display">Design Studio</h1>
+        <p class="page-sub">Build a design brief manually — choose fabric, style, colors, and let AI do the rest</p>
+      </div>
+
+      <div id="manual-form">
+        <div class="design-form">
+          <div class="form-row" style="margin-bottom:1rem;">
+            <div class="form-group">
+              <label class="form-label">Fabric Type</label>
+              <select class="form-select" id="m-fabric">
+                <optgroup label="Nigerian Fabrics">
+                  <option value="ankara">Ankara (Wax Print)</option>
+                  <option value="aso-oke">Aso-Oke</option>
+                  <option value="adire">Adire</option>
+                  <option value="george">George</option>
+                  <option value="kente">Kente</option>
+                  <option value="hollandaise">Hollandaise</option>
+                  <option value="lace">Guipure Lace</option>
+                  <option value="damask">Damask / Shadow</option>
+                  <option value="velvet">Velvet</option>
+                </optgroup>
+                <optgroup label="International Fabrics">
+                  <option value="silk">Silk</option>
+                  <option value="cotton">Cotton</option>
+                  <option value="chiffon">Chiffon</option>
+                  <option value="satin">Satin</option>
+                  <option value="organza">Organza</option>
+                  <option value="linen">Linen</option>
+                  <option value="wool">Wool</option>
+                  <option value="jersey">Jersey</option>
+                </optgroup>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Pattern Style</label>
+              <select class="form-select" id="m-style">
+                <option value="geometric">Geometric</option>
+                <option value="floral">Floral</option>
+                <option value="abstract">Abstract</option>
+                <option value="tribal">Tribal</option>
+                <option value="paisley">Paisley</option>
+                <option value="plaid">Plaid</option>
+                <option value="damask">Damask</option>
+                <option value="ikat">Ikat</option>
+                <option value="batik">Batik</option>
+                <option value="ombre">Ombré</option>
+                <option value="houndstooth">Houndstooth</option>
+                <option value="brocade">Brocade</option>
+                <option value="lace">Lace</option>
+                <option value="tie-dye">Tie-Dye</option>
+                <option value="shibori">Shibori</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-row" style="margin-bottom:1rem;">
+            <div class="form-group">
+              <label class="form-label">Garment Type</label>
+              <select class="form-select" id="m-garment">
+                <optgroup label="Traditional Nigerian">
+                  <option value="agbada">Agbada</option>
+                  <option value="buba_and_iro">Buba & Iro</option>
+                  <option value="kaftan">Kaftan</option>
+                  <option value="senator">Senator Suit</option>
+                  <option value="iro_and_buba">Iro & Buba (Ceremonial)</option>
+                  <option value="dashiki">Dashiki</option>
+                  <option value="complete">Complete Set</option>
+                  <option value="bridal">Bridal Outfit</option>
+                </optgroup>
+                <optgroup label="Contemporary">
+                  <option value="dress">Afro-Fusion Dress</option>
+                  <option value="skirt_and_blouse">Skirt & Blouse</option>
+                  <option value="gown">Gown</option>
+                  <option value="jumpsuit">Jumpsuit</option>
+                </optgroup>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Occasion</label>
+              <select class="form-select" id="m-occasion">
+                <option value="owambe">Owambe Party</option>
+                <option value="traditional_wedding">Traditional Wedding</option>
+                <option value="church">Church / Sunday Service</option>
+                <option value="corporate">Corporate / Business</option>
+                <option value="durbar">Durbar Festival</option>
+                <option value="naming_ceremony">Naming Ceremony</option>
+                <option value="coronation">Coronation / Royal</option>
+                <option value="graduation">Graduation</option>
+                <option value="casual">Casual / Everyday</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-group" style="margin-bottom:1rem;">
+            <label class="form-label">Colour Palette</label>
+            <div class="color-picker-row" id="color-chips">
+              <!-- injected by JS -->
+            </div>
+          </div>
+          <div class="form-group" style="margin-bottom:1rem;">
+            <label class="form-label">Model Gender <span style="color:var(--text3)">(who wears the garment in the image)</span></label>
+            <div class="img-count-row">
+              <div class="img-count-btn active" id="mg-mauto" onclick="setManualGender('auto',this)">Auto</div>
+              <div class="img-count-btn" id="mg-mfemale" onclick="setManualGender('female',this)">👩🏿 Nigerian Woman</div>
+              <div class="img-count-btn" id="mg-mmale" onclick="setManualGender('male',this)">👨🏿 Nigerian Man</div>
+            </div>
+          </div>
+          <div class="form-group" style="margin-bottom:1rem;">
+            <label class="form-label">Pattern Complexity — <span id="complexity-val">5</span>/10</label>
+            <input type="range" min="1" max="10" value="5" class="complexity-slider" id="m-complexity"
+              oninput="document.getElementById('complexity-val').textContent=this.value">
+          </div>
+          <div class="form-group" style="margin-bottom:1rem;">
+            <label class="form-label">Number of Images</label>
+            <div class="img-count-row" id="m-img-count-row">
+              <div class="img-count-btn active" onclick="setImgCountManual(1,this)">1</div>
+              <div class="img-count-btn" onclick="setImgCountManual(2,this)">2</div>
+              <div class="img-count-btn" onclick="setImgCountManual(3,this)">3</div>
+              <div class="img-count-btn" onclick="setImgCountManual(4,this)">4</div>
+            </div>
+          </div>
+          <div class="form-group" style="margin-bottom:1.5rem;">
+            <label class="form-label">Extra Notes <span style="color:var(--text3)">(optional)</span></label>
+            <input class="form-input" type="text" id="m-prompt" placeholder="e.g. Inspired by Benin Kingdom bronzes, bold royal colours…" maxlength="500">
+          </div>
+          <button class="btn-primary" onclick="doManualGenerate()" id="manual-gen-btn">
+            ✦ Generate Fashion Design
+          </button>
+        </div>
+      </div>
+
+      <div id="manual-progress" style="display:none;">
+        <div class="progress-card">
+          <div style="font-family:'Playfair Display',serif; font-size:1.1rem; color:var(--cream); margin-bottom:0.5rem;">Crafting your design…</div>
+          <div class="progress-steps">
+            <div class="progress-step active" id="mstep1">
+              <div class="step-dot">1</div>
+              <div class="step-label">Claude AI</div>
+            </div>
+            <div class="progress-step" id="mstep2">
+              <div class="step-dot">2</div>
+              <div class="step-label">Design Concept</div>
+            </div>
+            <div class="progress-step" id="mstep3">
+              <div class="step-dot">3</div>
+              <div class="step-label">Generating Images</div>
+            </div>
+          </div>
+          <div class="spinner"></div>
+          <div class="progress-msg" id="manual-progress-msg">Claude is crafting your design concept…</div>
+        </div>
+      </div>
+
+      <div id="manual-result" style="display:none;">
+        <div id="manual-result-display"></div>
+        <div style="margin-top:1rem; display:flex; gap:0.75rem;">
+          <button class="btn-secondary" onclick="resetManual()">Generate Another</button>
+          <button class="btn-ghost" onclick="showPage('page-history')">View All Designs</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- PAGE: HISTORY -->
+    <div id="page-history" class="page" style="display:none;">
+      <div class="page-header">
+        <h1 class="page-title display">My Designs</h1>
+        <p class="page-sub">Your generated Nigerian fashion designs</p>
+      </div>
+      <div id="history-content">
+        <div class="empty-state">
+          <div class="spinner"></div>
+          <p style="color:var(--text3); margin-top:1rem;">Loading…</p>
+        </div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<!-- DETAIL MODAL -->
+<div id="modal-backdrop">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal()">✕</button>
+    <div id="modal-content"></div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div id="toast"></div>
+
+<script>
+const API = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
+  ? 'http://localhost:8000'
+  : '';  // same origin via nginx reverse proxy in production
+let token = localStorage.getItem('ugegbe_token');
+let currentUser = JSON.parse(localStorage.getItem('ugegbe_user') || 'null');
+let manualColors = ['#c8602a','#1a3d6e','#f5e642'];
+let manualImgCount = 1;
+let analyzeImgCount = 1;
+let selectedGender = 'auto';
+let manualGender = 'auto';
+let currentAnalysis = null;
+let pollTimer = null;
+
+function setGender(g, el) {
+  selectedGender = g;
+  ['auto','female','male'].forEach(id => {
+    document.getElementById('g-'+id)?.classList.remove('active');
+  });
+  el.classList.add('active');
+}
+
+function setManualGender(g, el) {
+  manualGender = g;
+  ['mauto','mfemale','mmale'].forEach(id => {
+    document.getElementById('mg-'+id)?.classList.remove('active');
+  });
+  el.classList.add('active');
+}
+
+// ── BOOT ──────────────────────────────────────────────────────────────────────
+function boot() {
+  if (token && currentUser) {
+    showApp();
+  } else {
+    document.getElementById('screen-auth').classList.add('active');
+  }
+}
+
+function showApp() {
+  document.getElementById('screen-auth').classList.remove('active');
+  document.getElementById('screen-app').classList.add('active');
+  document.getElementById('user-badge').style.display = 'flex';
+  document.getElementById('user-name-display').textContent = currentUser?.name?.split(' ')[0] || 'User';
+  initColorChips();
+  showPage('page-analyze');
+}
+
+function goHome() {
+  if (token) showPage('page-analyze');
+}
+
+// ── AUTH ──────────────────────────────────────────────────────────────────────
+function switchAuthTab(tab) {
+  document.getElementById('auth-login').style.display = tab === 'login' ? '' : 'none';
+  document.getElementById('auth-register').style.display = tab === 'register' ? '' : 'none';
+  document.querySelectorAll('.auth-tab').forEach((t, i) => {
+    t.classList.toggle('active', (tab === 'login' && i === 0) || (tab === 'register' && i === 1));
+  });
+}
+
+async function doLogin() {
+  const email = document.getElementById('login-email').value.trim();
+  const password = document.getElementById('login-password').value;
+  const errEl = document.getElementById('login-error');
+  const btn = document.getElementById('login-btn');
+  errEl.textContent = '';
+  if (!email || !password) { errEl.textContent = 'Please fill in all fields.'; return; }
+  btn.disabled = true; btn.textContent = 'Signing in…';
+  try {
+    const r = await fetch(`${API}/api/auth/login`, {
+      method: 'POST', headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({email, password})
+    });
+    const d = await r.json();
+    if (!r.ok) { errEl.textContent = d.detail || 'Login failed.'; return; }
+    token = d.access_token;
+    currentUser = d.user;
+    localStorage.setItem('ugegbe_token', token);
+    localStorage.setItem('ugegbe_user', JSON.stringify(currentUser));
+    showApp();
+  } catch(e) {
+    errEl.textContent = 'Could not connect to server. Is it running?';
+  } finally {
+    btn.disabled = false; btn.textContent = 'Sign In';
+  }
+}
+
+async function doRegister() {
+  const name = document.getElementById('reg-name').value.trim();
+  const email = document.getElementById('reg-email').value.trim();
+  const password = document.getElementById('reg-password').value;
+  const errEl = document.getElementById('register-error');
+  const btn = document.getElementById('register-btn');
+  errEl.textContent = '';
+  if (!name || !email || !password) { errEl.textContent = 'Please fill in all fields.'; return; }
+  if (password.length < 6) { errEl.textContent = 'Password must be at least 6 characters.'; return; }
+  btn.disabled = true; btn.textContent = 'Creating…';
+  try {
+    const r = await fetch(`${API}/api/auth/register`, {
+      method: 'POST', headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({name, email, password})
+    });
+    const d = await r.json();
+    if (!r.ok) { errEl.textContent = d.detail || 'Registration failed.'; return; }
+    token = d.access_token;
+    currentUser = d.user;
+    localStorage.setItem('ugegbe_token', token);
+    localStorage.setItem('ugegbe_user', JSON.stringify(currentUser));
+    showApp();
+  } catch(e) {
+    errEl.textContent = 'Could not connect to server.';
+  } finally {
+    btn.disabled = false; btn.textContent = 'Create Account';
+  }
+}
+
+function logout() {
+  token = null; currentUser = null;
+  localStorage.removeItem('ugegbe_token');
+  localStorage.removeItem('ugegbe_user');
+  document.getElementById('screen-app').classList.remove('active');
+  document.getElementById('screen-auth').classList.add('active');
+  document.getElementById('user-badge').style.display = 'none';
+}
+
+// ── NAVIGATION ────────────────────────────────────────────────────────────────
+function showPage(pageId) {
+  document.querySelectorAll('.page').forEach(p => p.style.display = 'none');
+  document.getElementById(pageId).style.display = 'block';
+  ['analyze','manual','history'].forEach(id => {
+    document.getElementById('sl-'+id)?.classList.remove('active');
+    document.getElementById('nav-'+id)?.classList.remove('active');
+  });
+  const map = {'page-analyze':'analyze','page-manual':'manual','page-history':'history'};
+  const key = map[pageId];
+  if (key) {
+    document.getElementById('sl-'+key)?.classList.add('active');
+    document.getElementById('nav-'+key)?.classList.add('active');
+  }
+  if (pageId === 'page-history') loadHistory();
+}
+
+// ── ANALYZE PAGE ──────────────────────────────────────────────────────────────
+function switchAnalyzeTab(tab) {
+  document.getElementById('analyze-upload').style.display = tab === 'upload' ? '' : 'none';
+  document.getElementById('analyze-result').style.display = tab === 'result' ? '' : 'none';
+  document.getElementById('analyze-design').style.display = tab === 'design' ? '' : 'none';
+  ['upload','result','design'].forEach(t => {
+    const el = document.getElementById('atab-'+t);
+    if (el) el.classList.toggle('active', t === tab);
+  });
+}
+
+function setImgCount(n, el) {
+  analyzeImgCount = n;
+  document.querySelectorAll('#upload-options .img-count-btn').forEach(b => b.classList.remove('active'));
+  el.classList.add('active');
+}
+
+function handleFileSelect(input) {
+  const file = input.files[0];
+  if (!file) return;
+  const preview = document.getElementById('upload-preview');
+  const reader = new FileReader();
+  reader.onload = e => {
+    preview.src = e.target.result;
+    preview.style.display = 'block';
+    document.getElementById('upload-icon').style.display = 'none';
+    document.getElementById('upload-title').textContent = file.name;
+    document.getElementById('upload-sub').textContent = `${(file.size/1024).toFixed(0)}KB · Click to change`;
+    document.getElementById('upload-options').style.display = 'block';
+  };
+  reader.readAsDataURL(file);
+  // Drag zone
+  const dz = document.getElementById('dropzone');
+  dz.addEventListener('dragover', e => { e.preventDefault(); dz.classList.add('dragover'); });
+  dz.addEventListener('dragleave', () => dz.classList.remove('dragover'));
+  dz.addEventListener('drop', e => {
+    e.preventDefault(); dz.classList.remove('dragover');
+    const f = e.dataTransfer.files[0];
+    if (f) { const inp = document.getElementById('fabric-file'); const dt = new DataTransfer(); dt.items.add(f); inp.files = dt.files; handleFileSelect(inp); }
+  });
+}
+
+function setProgressStep(n) {
+  for (let i = 1; i <= 4; i++) {
+    const el = document.getElementById('step'+i);
+    if (!el) continue;
+    el.classList.remove('active','done');
+    if (i < n) el.classList.add('done');
+    if (i === n) el.classList.add('active');
+  }
+}
+
+async function doAnalyzeAndDesign() {
+  const file = document.getElementById('fabric-file').files[0];
+  if (!file) { showToast('Please select a fabric photo first.', 'error'); return; }
+  document.getElementById('upload-options').style.display = 'none';
+  document.getElementById('analyze-progress').style.display = 'block';
+  setProgressStep(1);
+  document.getElementById('progress-msg').textContent = 'Uploading fabric image…';
+
+  const fd = new FormData();
+  fd.append('file', file);
+  fd.append('num_images', analyzeImgCount);
+  const garment = document.getElementById('override-garment').value;
+  const occasion = document.getElementById('override-occasion').value;
+  if (garment) fd.append('garment_type', garment);
+  if (occasion) fd.append('occasion', occasion);
+  if (selectedGender && selectedGender !== 'auto') fd.append('gender', selectedGender);
+
+  try {
+    setProgressStep(2);
+    document.getElementById('progress-msg').textContent = 'Claude Vision is identifying your fabric…';
+    const r = await authFetch('/api/fabric/analyze-and-design', { method:'POST', body: fd });
+    const d = await r.json();
+    if (!r.ok) throw new Error(d.detail || 'Analysis failed');
+
+    currentAnalysis = d.fabric_analysis;
+    setProgressStep(3);
+    document.getElementById('progress-msg').textContent = 'Fabric identified! Generating design concept…';
+
+    await pollForResult(d.task_id, 'analyze');
+  } catch(e) {
+    document.getElementById('analyze-progress').style.display = 'none';
+    document.getElementById('upload-options').style.display = 'block';
+    showToast(e.message, 'error');
+  }
+}
+
+async function doAnalyzeOnly() {
+  const file = document.getElementById('fabric-file').files[0];
+  if (!file) { showToast('Please select a fabric photo first.', 'error'); return; }
+  document.getElementById('upload-options').style.display = 'none';
+  document.getElementById('analyze-progress').style.display = 'block';
+  setProgressStep(1); document.getElementById('progress-msg').textContent = 'Uploading…';
+
+  const fd = new FormData();
+  fd.append('file', file);
+
+  try {
+    setProgressStep(2); document.getElementById('progress-msg').textContent = 'Claude Vision is analysing…';
+    const r = await authFetch('/api/fabric/analyze', { method:'POST', body: fd });
+    const d = await r.json();
+    if (!r.ok) throw new Error(d.detail || 'Analysis failed');
+
+    currentAnalysis = d.analysis;
+    document.getElementById('analyze-progress').style.display = 'none';
+    document.getElementById('atab-result').style.display = '';
+    renderAnalysis(d.analysis, 'analysis-display');
+    switchAnalyzeTab('result');
+    showToast(`Fabric identified: ${capitalise(d.analysis.fabric_type)} (${Math.round(d.analysis.confidence*100)}% confidence)`, 'success');
+  } catch(e) {
+    document.getElementById('analyze-progress').style.display = 'none';
+    document.getElementById('upload-options').style.display = 'block';
+    showToast(e.message, 'error');
+  }
+}
+
+function proceedToDesignFromAnalysis() {
+  if (!currentAnalysis) return;
+  // Pre-fill manual form
+  const map = {'ankara':'ankara','aso-oke':'aso-oke','adire':'adire','george':'george','kente':'kente','hollandaise':'hollandaise','lace':'lace','damask':'damask','velvet':'velvet','silk':'silk','cotton':'cotton','chiffon':'chiffon','satin':'satin','organza':'organza','linen':'linen','wool':'wool','jersey':'jersey'};
+  document.getElementById('m-fabric').value = map[currentAnalysis.fabric_type] || 'ankara';
+  document.getElementById('m-style').value = currentAnalysis.pattern_style || 'geometric';
+  document.getElementById('m-complexity').value = currentAnalysis.complexity || 5;
+  document.getElementById('complexity-val').textContent = currentAnalysis.complexity || 5;
+  manualColors = currentAnalysis.dominant_colors?.slice(0,5) || ['#c8602a','#1a3d6e','#f5e642'];
+  initColorChips();
+  showPage('page-manual');
+}
+
+function resetAnalyze() {
+  document.getElementById('fabric-file').value = '';
+  document.getElementById('upload-preview').style.display = 'none';
+  document.getElementById('upload-icon').style.display = '';
+  document.getElementById('upload-title').textContent = 'Drop your fabric photo here';
+  document.getElementById('upload-sub').textContent = 'or click to browse · JPEG, PNG, WEBP · Max 10MB';
+  document.getElementById('upload-options').style.display = 'none';
+  document.getElementById('analyze-progress').style.display = 'none';
+  document.getElementById('atab-result').style.display = 'none';
+  document.getElementById('atab-design').style.display = 'none';
+  switchAnalyzeTab('upload');
+  currentAnalysis = null;
+}
+
+// ── MANUAL DESIGN ─────────────────────────────────────────────────────────────
+function setImgCountManual(n, el) {
+  manualImgCount = n;
+  document.querySelectorAll('#m-img-count-row .img-count-btn').forEach(b => b.classList.remove('active'));
+  el.classList.add('active');
+}
+
+function initColorChips() {
+  const row = document.getElementById('color-chips');
+  if (!row) return;
+  row.innerHTML = '';
+  manualColors.forEach((c, i) => addColorChip(c, i, row));
+  if (manualColors.length < 8) {
+    const add = document.createElement('button');
+    add.className = 'add-color-btn'; add.innerHTML = '+'; add.title = 'Add colour';
+    add.onclick = () => { manualColors.push('#'+Math.floor(Math.random()*0xffffff).toString(16).padStart(6,'0')); initColorChips(); };
+    row.appendChild(add);
+  }
+}
+
+function addColorChip(color, idx, row) {
+  const chip = document.createElement('div');
+  chip.className = 'color-chip';
+  chip.style.background = color;
+  const inp = document.createElement('input');
+  inp.type = 'color'; inp.value = color;
+  inp.oninput = e => { manualColors[idx] = e.target.value; chip.style.background = e.target.value; };
+  const rm = document.createElement('button');
+  rm.className = 'remove-color'; rm.innerHTML = '✕';
+  rm.onclick = e => { e.stopPropagation(); if (manualColors.length > 1) { manualColors.splice(idx,1); initColorChips(); } };
+  chip.appendChild(inp); chip.appendChild(rm);
+  row.appendChild(chip);
+}
+
+async function doManualGenerate() {
+  const fabric = document.getElementById('m-fabric').value;
+  const style = document.getElementById('m-style').value;
+  const garment = document.getElementById('m-garment').value;
+  const occasion = document.getElementById('m-occasion').value;
+  const complexity = parseInt(document.getElementById('m-complexity').value);
+  const prompt = document.getElementById('m-prompt').value;
+
+  document.getElementById('manual-form').style.display = 'none';
+  document.getElementById('manual-progress').style.display = 'block';
+  document.getElementById('manual-result').style.display = 'none';
+
+  setManualStep(1); document.getElementById('manual-progress-msg').textContent = 'Claude is crafting your design concept…';
+
+  try {
+    const r = await authFetch('/api/designs/generate', {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({
+        style, colors: manualColors, complexity,
+        fabric_type: fabric, garment_type: garment,
+        occasion, prompt, num_images: manualImgCount,
+        gender_override: manualGender !== 'auto' ? manualGender : undefined,
+      })
+    });
+    const d = await r.json();
+    if (!r.ok) throw new Error(d.detail || 'Failed to queue design');
+    await pollForResult(d.task_id, 'manual');
+  } catch(e) {
+    document.getElementById('manual-form').style.display = '';
+    document.getElementById('manual-progress').style.display = 'none';
+    showToast(e.message, 'error');
+  }
+}
+
+function setManualStep(n) {
+  for (let i = 1; i <= 3; i++) {
+    const el = document.getElementById('mstep'+i);
+    if (!el) continue;
+    el.classList.remove('active','done');
+    if (i < n) el.classList.add('done');
+    if (i === n) el.classList.add('active');
+  }
+}
+
+function resetManual() {
+  document.getElementById('manual-form').style.display = '';
+  document.getElementById('manual-progress').style.display = 'none';
+  document.getElementById('manual-result').style.display = 'none';
+}
+
+// ── POLLING ───────────────────────────────────────────────────────────────────
+async function pollForResult(taskId, context) {
+  let attempts = 0;
+  const maxAttempts = 60; // 2 min
+
+  const msgs = [
+    'Generating design concept with Claude…',
+    'Analysing cultural patterns and fabrics…',
+    'Crafting your Nigerian fashion design…',
+    'FLUX.1 Pro is rendering fashion images…',
+    'Almost there — adding finishing touches…',
+  ];
+
+  const tick = async () => {
+    attempts++;
+    if (attempts % 5 === 0 && context === 'manual') {
+      setManualStep(attempts < 10 ? 2 : 3);
+      document.getElementById('manual-progress-msg').textContent = msgs[Math.min(Math.floor(attempts/8), msgs.length-1)];
+    }
+    if (context === 'analyze') {
+      setProgressStep(attempts < 8 ? 3 : 4);
+      document.getElementById('progress-msg').textContent = msgs[Math.min(Math.floor(attempts/8)+1, msgs.length-1)];
+    }
+
+    try {
+      const r = await authFetch(`/api/designs/status/${taskId}`);
+      const d = await r.json();
+
+      if (d.status === 'complete') {
+        clearTimeout(pollTimer);
+        if (context === 'analyze') {
+          document.getElementById('analyze-progress').style.display = 'none';
+          document.getElementById('atab-design').style.display = '';
+          renderDesignResult(d.result, 'design-result-display');
+          if (currentAnalysis) {
+            const ac = document.getElementById('analysis-display');
+            if (!ac.innerHTML) renderAnalysis(currentAnalysis, 'analysis-display');
+            document.getElementById('atab-result').style.display = '';
+          }
+          switchAnalyzeTab('design');
+        } else {
+          setManualStep(4);
+          document.getElementById('manual-progress').style.display = 'none';
+          document.getElementById('manual-result').style.display = '';
+          renderDesignResult(d.result, 'manual-result-display');
+        }
+        showToast('Design generated successfully!', 'success');
+        return;
+      }
+
+      if (d.status === 'failed') {
+        clearTimeout(pollTimer);
+        throw new Error(d.error || 'Design generation failed');
+      }
+
+      if (attempts < maxAttempts) {
+        pollTimer = setTimeout(tick, 2500);
+      } else {
+        throw new Error('Generation timed out. Please try again.');
+      }
+    } catch(e) {
+      if (context === 'analyze') {
+        document.getElementById('analyze-progress').style.display = 'none';
+        document.getElementById('upload-options').style.display = 'block';
+      } else {
+        document.getElementById('manual-form').style.display = '';
+        document.getElementById('manual-progress').style.display = 'none';
+      }
+      showToast(e.message, 'error');
+    }
+  };
+
+  pollTimer = setTimeout(tick, 2000);
+}
+
+// ── RENDER ANALYSIS ───────────────────────────────────────────────────────────
+function renderAnalysis(a, containerId) {
+  const c = document.getElementById(containerId);
+  const dots = Array.from({length:10},(_,i)=>`<div class="complexity-dot ${i<a.complexity?'filled':''}"></div>`).join('');
+  const swatches = (a.dominant_colors||[]).map(col=>`<div class="swatch" style="background:${col}" title="${col}"></div>`).join('');
+  c.innerHTML = `
+    <div style="display:flex;align-items:center;gap:1rem;margin-bottom:1.25rem;flex-wrap:wrap;">
+      <div class="fabric-badge">✦ ${capitalise(a.fabric_type||'Unknown')}</div>
+      <div style="font-size:0.8rem;color:var(--text2);">${capitalise(a.fabric_family?.replace(/_/g,' ')||'')}</div>
+      <div style="margin-left:auto;font-size:0.8rem;color:var(--text2);">
+        Confidence: <strong style="color:var(--gold2)">${Math.round((a.confidence||0)*100)}%</strong>
+      </div>
+    </div>
+    <div class="confidence-bar"><div class="confidence-fill" style="width:${(a.confidence||0)*100}%"></div></div>
+    <div class="analysis-grid" style="margin-top:1.25rem;">
+      <div class="analysis-item">
+        <div class="analysis-label">Pattern Style</div>
+        <div class="analysis-value">${capitalise(a.pattern_style||'-')}</div>
+      </div>
+      <div class="analysis-item">
+        <div class="analysis-label">Complexity</div>
+        <div class="complexity-dots">${dots}</div>
+      </div>
+      <div class="analysis-item">
+        <div class="analysis-label">Fabric Weight</div>
+        <div class="analysis-value">${capitalise(a.fabric_weight||'-')}</div>
+      </div>
+      <div class="analysis-item">
+        <div class="analysis-label">Occasion</div>
+        <div class="analysis-value">${capitalise((a.likely_occasion||'-').replace(/_/g,' '))}</div>
+      </div>
+      <div class="analysis-item" style="grid-column:1/-1">
+        <div class="analysis-label">Dominant Colours</div>
+        <div class="color-swatches">${swatches}</div>
+      </div>
+      <div class="analysis-item" style="grid-column:1/-1">
+        <div class="analysis-label">Cultural Markers</div>
+        <div class="analysis-value" style="font-style:italic;color:var(--text2);font-weight:300;">${a.cultural_markers||'-'}</div>
+      </div>
+      <div class="analysis-item" style="grid-column:1/-1">
+        <div class="analysis-label">Pattern Description</div>
+        <div class="analysis-value" style="color:var(--text2);font-weight:300;font-size:0.85rem;line-height:1.6;">${a.pattern_description||'-'}</div>
+      </div>
+      <div class="analysis-item">
+        <div class="analysis-label">Garment Suggestions</div>
+        <div style="display:flex;gap:4px;flex-wrap:wrap;margin-top:4px;">${(a.garment_suggestions||[]).map(g=>`<span class="garment-tag">${g}</span>`).join('')}</div>
+      </div>
+      <div class="analysis-item">
+        <div class="analysis-label">Care</div>
+        <div class="analysis-value" style="font-size:0.82rem;color:var(--text2);font-weight:300;">${a.care_hint||'-'}</div>
+      </div>
+    </div>
+  `;
+}
+
+// ── RENDER DESIGN RESULT ──────────────────────────────────────────────────────
+function renderDesignResult(r, containerId) {
+  if (!r) return;
+  const c = document.getElementById(containerId);
+  const images = r.generated_images || [];
+  const palette = r.palette || {};
+  const colors = palette.colors || [];
+  const keywords = (r.pattern_keywords||[]).map(k=>`<span class="result-keyword">${k}</span>`).join('');
+  const garments = (r.garment_suggestions||[]).map(g=>`<span class="garment-tag">${g}</span>`).join('');
+  const paletteBlocks = colors.map(col=>`<div class="palette-block" style="background:${col}" title="${col}"></div>`).join('');
+  const swatches = colors.map(col=>`<div class="swatch" style="background:${col}"></div>`).join('');
+
+  let imagesHTML = '';
+  if (images.length === 0 || images.every(i=>i.placeholder||!i.url)) {
+    imagesHTML = `<div class="result-img-wrap single"><div class="img-placeholder">
+      <div class="img-placeholder-icon">🎨</div>
+      <div>Add FAL_KEY to your .env<br>to enable fashion image generation</div>
+    </div></div>`;
+  } else if (images.length === 1) {
+    imagesHTML = `<div class="result-img-wrap single"><img src="${images[0].url}" alt="${r.name}" loading="lazy"></div>`;
+  } else {
+    imagesHTML = images.map(img => img.url
+      ? `<div class="result-img-wrap"><img src="${img.url}" alt="${r.name}" loading="lazy"></div>`
+      : `<div class="result-img-wrap"><div class="img-placeholder"><div class="img-placeholder-icon">📷</div></div></div>`
+    ).join('');
+  }
+
+  c.innerHTML = `
+    <div class="result-section">
+      <div class="result-layout">
+        <div class="result-images">${imagesHTML}</div>
+        <div class="result-meta">
+          <div class="result-fabric-tag">✦ ${capitalise(r.pattern_params?.fabric_type||'Fabric')} · ${capitalise(r.pattern_params?.style||'')}</div>
+          <h2 class="result-name display">${r.name||'Untitled Design'}</h2>
+          <p class="result-desc">${r.description||''}</p>
+          <div class="result-row">${keywords}</div>
+          <div class="result-section-title">Cultural Heritage</div>
+          <div class="result-cultural">${r.cultural_reference||''}</div>
+          <div class="result-section-title">Palette — ${palette.mood||''} · ${palette.harmony||''}</div>
+          <div class="color-swatches" style="margin-bottom:0.75rem;">${swatches}</div>
+          <div class="palette-strip">${paletteBlocks}</div>
+          <div style="margin-top:1rem;">
+            <div class="result-section-title">Ideal Garments</div>
+            <div class="result-garments">${garments}</div>
+          </div>
+          <div style="margin-top:1rem;">
+            <div class="result-section-title">Style Notes</div>
+            <div style="color:var(--text2);font-size:0.85rem;font-weight:300;line-height:1.6;">${r.style_notes||''}</div>
+          </div>
+          <div style="margin-top:1rem;">
+            <div class="result-section-title">Care Instructions</div>
+            <div style="color:var(--text2);font-size:0.82rem;font-weight:300;">${r.care_instructions||''}</div>
+          </div>
+          <div class="ai-badge">
+            <div class="ai-dot"></div>
+            ${r.ai_powered ? `Claude ${r.model_used||''} · ${r.image_generation_enabled ? (r.image_model_used||'FLUX.1 Pro') : 'No image key'}` : 'Fallback mode (no API key)'}
+          </div>
+        </div>
+      </div>
+    </div>`;
+}
+
+// ── HISTORY ───────────────────────────────────────────────────────────────────
+async function loadHistory() {
+  const c = document.getElementById('history-content');
+  c.innerHTML = `<div class="empty-state"><div class="spinner"></div><p style="color:var(--text3);margin-top:1rem;">Loading…</p></div>`;
+  try {
+    const r = await authFetch('/api/designs/history');
+    const d = await r.json();
+    if (!d.length) {
+      c.innerHTML = `<div class="empty-state">
+        <div class="empty-icon">🎨</div>
+        <div class="empty-title display">No designs yet</div>
+        <p style="color:var(--text3);font-size:0.85rem;margin-bottom:1.5rem;">Upload a fabric photo or use the Design Studio to get started</p>
+        <button class="btn-primary" style="width:auto;padding:0.7rem 2rem;" onclick="showPage('page-analyze')">✦ Analyse a Fabric</button>
+      </div>`;
+      return;
+    }
+    c.innerHTML = `<div class="history-grid">${d.map(item => renderHistoryCard(item)).join('')}</div>`;
+  } catch(e) {
+    c.innerHTML = `<div class="empty-state"><p style="color:var(--text3)">Failed to load designs.</p></div>`;
+  }
+}
+
+function renderHistoryCard(item) {
+  const r = item.result || {};
+  const colors = r.palette?.colors || [];
+  const images = r.generated_images || [];
+  const firstImg = images.find(i => i.url && !i.placeholder);
+  const swatches = colors.map(c=>`<div class="h-swatch" style="background:${c}"></div>`).join('');
+  const tags = [r.pattern_params?.style, r.pattern_params?.fabric_type].filter(Boolean).map(t=>`<span class="history-tag">${capitalise(t)}</span>`).join('');
+  const imgHtml = firstImg
+    ? `<img src="${firstImg.url}" alt="${r.name||''}" loading="lazy">`
+    : `<div style="height:100%;display:flex;align-items:center;justify-content:center;color:var(--text3);font-size:2rem;">🎨</div>`;
+  const date = item.created_at ? new Date(item.created_at).toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'}) : '';
+  return `
+    <div class="history-card" onclick="openDesignModal('${item.task_id}')">
+      <div class="history-img">${imgHtml}</div>
+      <div class="history-body">
+        <div class="history-name display">${r.name||'Untitled'}</div>
+        <div class="history-meta">${date}</div>
+        <div class="history-tags">${tags}</div>
+        <div class="history-palette">${swatches}</div>
+        <button class="delete-btn" onclick="deleteDesign(event,'${item.task_id}')">Delete</button>
+      </div>
+    </div>`;
+}
+
+async function deleteDesign(e, taskId) {
+  e.stopPropagation();
+  if (!confirm('Delete this design?')) return;
+  try {
+    await authFetch(`/api/designs/${taskId}`, {method:'DELETE'});
+    showToast('Design deleted.', 'success');
+    loadHistory();
+  } catch(err) {
+    showToast('Could not delete design.', 'error');
+  }
+}
+
+// ── MODAL ─────────────────────────────────────────────────────────────────────
+async function openDesignModal(taskId) {
+  try {
+    const r = await authFetch(`/api/designs/status/${taskId}`);
+    const d = await r.json();
+    if (d.status !== 'complete' || !d.result) return;
+    const mc = document.getElementById('modal-content');
+    mc.innerHTML = '';
+    const wrapper = document.createElement('div');
+    wrapper.id = 'modal-result-inner';
+    mc.appendChild(wrapper);
+    renderDesignResult(d.result, 'modal-result-inner');
+    document.getElementById('modal-backdrop').classList.add('open');
+  } catch(e) {
+    showToast('Could not load design.', 'error');
+  }
+}
+
+function closeModal() {
+  document.getElementById('modal-backdrop').classList.remove('open');
+}
+document.getElementById('modal-backdrop').addEventListener('click', e => {
+  if (e.target === document.getElementById('modal-backdrop')) closeModal();
+});
+
+// ── API HELPERS ───────────────────────────────────────────────────────────────
+async function authFetch(path, opts={}) {
+  const headers = opts.headers ? {...opts.headers} : {};
+  if (!(opts.body instanceof FormData)) {
+    headers['Content-Type'] = headers['Content-Type'] || 'application/json';
+  }
+  headers['Authorization'] = `Bearer ${token}`;
+  const res = await fetch(API + path, {...opts, headers});
+  if (res.status === 401) { logout(); throw new Error('Session expired.'); }
+  return res;
+}
+
+// ── TOAST ─────────────────────────────────────────────────────────────────────
+let toastTimer;
+function showToast(msg, type='') {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.className = 'show ' + type;
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => el.className = '', 4000);
+}
+
+// ── UTILS ─────────────────────────────────────────────────────────────────────
+function capitalise(str) {
+  if (!str) return '';
+  return str.charAt(0).toUpperCase() + str.slice(1);
+}
+
+// ── ENTER KEY SUPPORT ─────────────────────────────────────────────────────────
+document.getElementById('login-password').addEventListener('keydown', e => { if (e.key==='Enter') doLogin(); });
+document.getElementById('reg-password').addEventListener('keydown', e => { if (e.key==='Enter') doRegister(); });
+
+boot();
+</script>
+</body>
+</html>

@@ -12,8 +12,12 @@ const envSchema = z.object({
     .transform((val) => parseInt(val, 10)),
   MAX_IMAGE_SIZE_MB: z
     .string()
-    .default("8")
-    .transform((val) => parseInt(val, 10)),
+    .default("4")
+    .transform((val) => parseInt(val, 10))
+    .refine(
+      (value) => Number.isInteger(value) && value > 0 && value <= 4,
+      "MAX_IMAGE_SIZE_MB must be a whole number from 1 to 4 on Vercel"
+    ),
 
   // FLUX Image Generation
   FLUX_API_KEY: z.string().min(1, "FLUX_API_KEY is required"),
